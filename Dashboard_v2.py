@@ -1,14 +1,22 @@
 # ============================
-# Imports & Page Config
+# ReleasePulse v2 — Enhanced Dashboard
 # ============================
+# New features:
+# - Methodology page explaining the approach
+# - Export functionality for priority backlog
+# - Enhanced About section with PM context
+# - "How to Interpret" guidance throughout
+# ============================
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from datetime import datetime
 
 st.set_page_config(
-    page_title="ReleasePulse",
+    page_title="ReleasePulse v2",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -49,6 +57,35 @@ st.markdown("""
         border-left: 4px solid #1f77b4;
         margin: 10px 0;
     }
+    .warning-box {
+        background-color: #fff3cd;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #ffc107;
+        margin: 10px 0;
+    }
+    .success-box {
+        background-color: #d4edda;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #28a745;
+        margin: 10px 0;
+    }
+    .methodology-card {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #dee2e6;
+        margin: 10px 0;
+    }
+    .formula-box {
+        background: #2d2d2d;
+        color: #f8f8f2;
+        padding: 15px;
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        margin: 10px 0;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -70,7 +107,8 @@ df = reviews.copy()
 # Sidebar Navigation
 # ============================
 st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Spotify_icon.svg/232px-Spotify_icon.svg.png", width=60)
-st.sidebar.title("ReleasePulse")
+st.sidebar.title("ReleasePulse v2")
+st.sidebar.caption("Enhanced Edition")
 st.sidebar.markdown("---")
 
 page = st.sidebar.radio(
@@ -78,6 +116,7 @@ page = st.sidebar.radio(
     [
         "Home",
         "About",
+        "Methodology",  # NEW
         "Executive Summary",
         "Release Health",
         "Priority Roadmap",
@@ -97,14 +136,14 @@ st.sidebar.metric("App Versions", total_versions)
 st.sidebar.metric("Theme Categories", total_themes)
 
 st.sidebar.markdown("---")
-st.sidebar.caption("ReleasePulse — Internal PM Tool")
+st.sidebar.caption("ReleasePulse v2 — Internal PM Tool")
 st.sidebar.caption("Created by Suruthe Jayachandran")
 
 # ============================
 # 1. HOME
 # ============================
 if page == "Home":
-    st.title("ReleasePulse")
+    st.title("ReleasePulse v2")
     st.markdown("### AI-Assisted Feedback Intelligence for Product Roadmaps")
     
     st.markdown("""
@@ -113,6 +152,30 @@ if page == "Home":
     noisy user reviews into <strong>actionable release insights</strong> and <strong>prioritized roadmap decisions</strong>.
     </div>
     """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    # What's New in V2
+    st.subheader("What's New in V2")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        **Methodology Page**  
+        Understand how the system works with detailed explanations of clustering, regression detection, and prioritization.
+        """)
+    
+    with col2:
+        st.markdown("""
+        **Export Functionality**  
+        Download your priority backlog as CSV to import directly into Jira or other tools.
+        """)
+    
+    with col3:
+        st.markdown("""
+        **Interpretation Guides**  
+        "How to interpret" sections throughout to help you make better decisions.
+        """)
     
     st.markdown("---")
     
@@ -194,7 +257,7 @@ if page == "Home":
         fig.update_layout(height=350)
         st.plotly_chart(fig, use_container_width=True)
     
-    st.info("Use the sidebar navigation to explore detailed insights")
+    st.info("Use the sidebar navigation to explore detailed insights. Start with **Methodology** to understand how the system works.")
 
 # ============================
 # 2. ABOUT
@@ -234,11 +297,39 @@ elif page == "About":
     
     st.markdown("---")
     
+    # Problem Statement
+    st.subheader("The Problem We Solve")
+    
+    st.markdown("""
+    <div class="warning-box">
+    <strong>The Challenge:</strong> Product Managers spend <strong>4-8 hours per release</strong> manually reading 
+    and categorizing app reviews. This process is time-consuming, subjective, and often reactive—issues are 
+    discovered after they've already impacted users.
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class="success-box">
+    <strong>The Solution:</strong> ReleasePulse automates the feedback-to-insight pipeline, reducing analysis 
+    time to <strong>under 10 minutes</strong> while providing consistent, data-driven prioritization.
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
     st.subheader("How to Use This Dashboard")
     
-    tab1, tab2, tab3, tab4 = st.tabs(["Executive Summary", "Release Health", "Priority Roadmap", "Theme Deep Dive"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["Methodology", "Executive Summary", "Release Health", "Priority Roadmap", "Theme Deep Dive"])
     
     with tab1:
+        st.markdown("""
+        **Methodology** (NEW in V2) explains the technical approach:
+        - How reviews are weighted and clustered
+        - How regressions and persistence are detected
+        - The RICE prioritization formula
+        """)
+    
+    with tab2:
         st.markdown("""
         **Executive Summary** provides a high-level snapshot of the latest release:
         - Overall user pain metrics
@@ -246,7 +337,7 @@ elif page == "About":
         - Quick health assessment
         """)
     
-    with tab2:
+    with tab3:
         st.markdown("""
         **Release Health** offers diagnostic views:
         - Pain concentration by version
@@ -254,15 +345,16 @@ elif page == "About":
         - Version-over-version comparisons
         """)
     
-    with tab3:
+    with tab4:
         st.markdown("""
         **Priority Roadmap** helps with decision-making:
         - RICE-style prioritization scoring
         - Effort vs. impact analysis
         - Regression and persistence flags
+        - **CSV export** for Jira import
         """)
     
-    with tab4:
+    with tab5:
         st.markdown("""
         **Theme Deep Dive** validates insights with evidence:
         - Raw user feedback samples
@@ -276,7 +368,243 @@ elif page == "About":
     """)
 
 # ============================
-# 3. EXECUTIVE SUMMARY
+# 3. METHODOLOGY (NEW)
+# ============================
+elif page == "Methodology":
+    st.title("Methodology")
+    st.markdown("### How ReleasePulse Works")
+    
+    st.markdown("""
+    This page explains the technical approach behind ReleasePulse so you can 
+    **understand and trust** the insights it provides.
+    """)
+    
+    st.markdown("---")
+    
+    # Pipeline Overview
+    st.subheader("1. Data Pipeline Overview")
+    
+    col1, col2, col3, col4, col5 = st.columns(5)
+    
+    with col1:
+        st.markdown("""
+        <div class="methodology-card" style="text-align: center;">
+        <h4>Step 1</h4>
+        <p><strong>Collect</strong></p>
+        <p style="font-size: 0.8rem;">App store reviews with scores & metadata</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="methodology-card" style="text-align: center;">
+        <h4>Step 2</h4>
+        <p><strong>Weight</strong></p>
+        <p style="font-size: 0.8rem;">Severity × Impact × Sample Size</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div class="methodology-card" style="text-align: center;">
+        <h4>Step 3</h4>
+        <p><strong>Cluster</strong></p>
+        <p style="font-size: 0.8rem;">NLP embeddings + KMeans</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col4:
+        st.markdown("""
+        <div class="methodology-card" style="text-align: center;">
+        <h4>Step 4</h4>
+        <p><strong>Analyze</strong></p>
+        <p style="font-size: 0.8rem;">Regression & persistence detection</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col5:
+        st.markdown("""
+        <div class="methodology-card" style="text-align: center;">
+        <h4>Step 5</h4>
+        <p><strong>Prioritize</strong></p>
+        <p style="font-size: 0.8rem;">RICE scoring</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    # Weighting System
+    st.subheader("2. Review Weighting System")
+    
+    st.markdown("""
+    Not all reviews are equal. A 1-star review with 50 thumbs-up from the latest version 
+    carries more signal than a 3-star review with no engagement from an old release.
+    """)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        **Weight Components:**
+        
+        | Component | Formula | Rationale |
+        |-----------|---------|-----------|
+        | Severity | `6 - score` | Low ratings = more pain |
+        | Impact | `1 + (thumbs_up / max)` | Validated feedback matters more |
+        | Version | `count / max_count` | Normalize for sample size |
+        """)
+    
+    with col2:
+        st.markdown("""
+        <div class="formula-box">
+        <strong>Final Weight =</strong><br>
+        Severity × Impact × Version Weight
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        **Example:**  
+        1-star review (severity=5) with 10 thumbs-up (impact=1.5) 
+        from a well-sampled release (version=0.8) = **6.0 weight**
+        """)
+    
+    st.markdown("---")
+    
+    # Theme Clustering
+    st.subheader("3. Theme Clustering")
+    
+    st.markdown("""
+    Reviews are automatically grouped into product themes using **semantic embeddings**.
+    """)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        **How it works:**
+        1. Each review is converted to a 384-dimensional vector using `sentence-transformers`
+        2. Vectors are weighted by review importance
+        3. KMeans clustering groups similar reviews
+        4. Each cluster is labeled as a product theme
+        
+        **Why 6 clusters?**  
+        Empirically tested 4, 6, 8, 10 — 6 provided the best balance of 
+        interpretability and distinctiveness.
+        """)
+    
+    with col2:
+        st.markdown("**Current Themes:**")
+        theme_descriptions = {
+            "Playback Reliability": "Crashes, buffering, songs not playing",
+            "Navigation & Home Feed": "UI navigation, homepage recommendations",
+            "Library & Playlist Control": "Playlist management, library organization",
+            "Free vs Premium Friction": "Ads, premium features, upgrade prompts",
+            "UI & Content Surfaces": "Visual design, content discovery",
+            "Performance & Media Issues": "App speed, downloads, offline mode"
+        }
+        
+        for theme, desc in theme_descriptions.items():
+            st.markdown(f"- **{theme}**: {desc}")
+    
+    st.markdown("---")
+    
+    # Regression & Persistence
+    st.subheader("4. Regression & Persistence Detection")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div class="methodology-card">
+        <h4>Regression Detection</h4>
+        <p>A theme is flagged as a <strong>regression</strong> if its pain share 
+        increases by more than <strong>5%</strong> vs. the previous release.</p>
+        <p><em>Indicates: Something broke in the latest release</em></p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="methodology-card">
+        <h4>Persistence Detection</h4>
+        <p>A theme is flagged as <strong>persistent</strong> if it represents 
+        more than <strong>15%</strong> of pain in <strong>3+ releases</strong>.</p>
+        <p><em>Indicates: Long-standing tech debt</em></p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class="highlight-box">
+    <strong>How to interpret flags:</strong>
+    <ul>
+    <li><strong>Regression only</strong>: New issue — investigate recent changes</li>
+    <li><strong>Persistent only</strong>: Tech debt — plan for larger investment</li>
+    <li><strong>Both flags</strong>: Worsening chronic issue — high priority</li>
+    </ul>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    # RICE Prioritization
+    st.subheader("5. RICE Prioritization")
+    
+    st.markdown("""
+    Themes are ranked using a modified **RICE framework** (Reach, Impact, Confidence, Effort).
+    """)
+    
+    st.markdown("""
+    <div class="formula-box">
+    <strong>Priority Score = (Reach × Impact × Confidence) / Effort</strong>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        | Component | Calculation |
+        |-----------|-------------|
+        | **Reach** | 60% signal + 40% volume |
+        | **Impact** | Inverted rating × multipliers |
+        | **Confidence** | 70% volume + 30% persistence |
+        | **Effort** | Manual estimate (1-5) |
+        """)
+    
+    with col2:
+        st.markdown("""
+        **Impact Multipliers:**
+        - **+20%** if regression (release risk)
+        - **+20%** if persistent (accumulated debt)
+        
+        **Effort Scale:**
+        - 1 = Quick fix
+        - 2 = Small feature
+        - 3 = Medium feature
+        - 4 = Large feature
+        - 5 = Major initiative
+        """)
+    
+    st.markdown("---")
+    
+    st.subheader("6. Limitations & Caveats")
+    
+    st.markdown("""
+    <div class="warning-box">
+    <strong>Important caveats to keep in mind:</strong>
+    <ul>
+    <li><strong>Effort is estimated</strong>: Treat as relative, not absolute</li>
+    <li><strong>Correlation ≠ causation</strong>: Clusters show patterns, not root causes</li>
+    <li><strong>English-focused</strong>: Embeddings optimized for English text</li>
+    <li><strong>Batch analysis</strong>: Not real-time; reflects data at pipeline run time</li>
+    </ul>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.info("For the full technical documentation, see [METHODOLOGY.md](https://github.com/yourusername/ReleasePulse/blob/main/docs/METHODOLOGY.md)")
+
+# ============================
+# 4. EXECUTIVE SUMMARY
 # ============================
 elif page == "Executive Summary":
     st.title("Executive Summary")
@@ -373,9 +701,18 @@ elif page == "Executive Summary":
         **Critical Reviews (1-2 stars):** {low_ratings} ({100*low_ratings/len(latest_df):.1f}%)  
         - Requires immediate attention
         """)
+    
+    # How to interpret (NEW)
+    with st.expander("How to Interpret This Data"):
+        st.markdown("""
+        - **Pain Score** is a weighted sum where low ratings, high engagement, and well-sampled releases contribute more
+        - **Top Pain Area** shows where users are struggling most in this release
+        - **Critical Reviews** (1-2 stars) often contain the most actionable feedback
+        - Compare with previous releases in **Release Health** to see if issues are new or ongoing
+        """)
 
 # ============================
-# 4. RELEASE HEALTH
+# 5. RELEASE HEALTH
 # ============================
 elif page == "Release Health":
     st.title("Release Health — Diagnostic View")
@@ -456,9 +793,18 @@ elif page == "Release Health":
             prev_df = df[df["RC_ver"] == prev_version]
             prev_pain = prev_df.groupby("theme_label")["final_weight"].sum()
             st.dataframe(prev_pain.reset_index().rename(columns={"final_weight": "Pain Score"}), hide_index=True)
+    
+    # How to interpret (NEW)
+    with st.expander("How to Interpret This Data"):
+        st.markdown("""
+        - **Percentage** shows each theme's share of total pain for this release
+        - Compare percentages across versions to identify **regressions** (sudden increases)
+        - A theme with >20% pain share is a major concern
+        - Use **Theme Deep Dive** to see actual user quotes for any concerning theme
+        """)
 
 # ============================
-# 5. PRIORITY ROADMAP
+# 6. PRIORITY ROADMAP
 # ============================
 elif page == "Priority Roadmap":
     st.title("Priority Roadmap")
@@ -545,6 +891,27 @@ elif page == "Priority Roadmap":
         hide_index=True
     )
     
+    # Export functionality (NEW)
+    st.markdown("---")
+    st.subheader("Export Backlog")
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        st.markdown("Download the priority backlog as CSV to import into Jira, Asana, or other tools.")
+    
+    with col2:
+        export_df = priority[["theme", "Priority_Score", "Reach", "Impact", "Confidence", "Effort", "Is_Persistent", "Is_Regression"]].copy()
+        export_df = export_df.sort_values("Priority_Score", ascending=False)
+        
+        csv = export_df.to_csv(index=False)
+        st.download_button(
+            label="Download CSV",
+            data=csv,
+            file_name=f"priority_backlog_{datetime.now().strftime('%Y%m%d')}.csv",
+            mime="text/csv"
+        )
+    
     st.markdown("""
     ---
     **How to interpret this table:**
@@ -552,9 +919,24 @@ elif page == "Priority Roadmap":
     - **Low effort + persistent pain** → Fastest wins
     - **Regression flags** indicate release risk requiring immediate attention
     """)
+    
+    # How to interpret (NEW)
+    with st.expander("Understanding the RICE Components"):
+        st.markdown("""
+        | Component | What It Measures | Range |
+        |-----------|------------------|-------|
+        | **Reach** | % of users affected (signal + volume) | 0-1 |
+        | **Impact** | Severity of pain (inverted rating + multipliers) | 0-1.44 |
+        | **Confidence** | Reliability of the signal (volume + persistence) | 0-1 |
+        | **Effort** | Estimated implementation complexity | 1-5 |
+        
+        **Flags:**
+        - **Is_Regression = True**: Pain increased >5% from last release
+        - **Is_Persistent = True**: Pain high in 3+ consecutive releases
+        """)
 
 # ============================
-# 6. TREND ANALYSIS
+# 7. TREND ANALYSIS
 # ============================
 elif page == "Trend Analysis":
     st.title("Trend Analysis")
@@ -655,11 +1037,21 @@ elif page == "Trend Analysis":
             st.plotly_chart(fig, use_container_width=True)
             
             st.caption("Positive delta = worsening signal | Negative delta = improving")
+        
+        # How to interpret (NEW)
+        with st.expander("How to Interpret Trends"):
+            st.markdown("""
+            - **Normalized Signal** shows each theme's % share of total pain per release
+            - **Upward trend** = worsening issue, may need prioritization
+            - **Downward trend** = improving, possibly due to past fixes
+            - **Delta > 0.05** triggers a regression flag
+            - **Stable high signal** across 3+ releases = persistent issue
+            """)
     else:
         st.warning("Please select at least one theme to view trends.")
 
 # ============================
-# 7. THEME DEEP DIVE
+# 8. THEME DEEP DIVE
 # ============================
 elif page == "Theme Deep Dive":
     st.title("Theme Deep Dive — User Evidence")
@@ -706,6 +1098,15 @@ elif page == "Theme Deep Dive":
     
     st.markdown("---")
     
+    # How to use this data (NEW)
+    st.markdown("""
+    <div class="highlight-box">
+    <strong>How to use this data:</strong> Read through high-impact reviews to understand the 
+    <em>why</em> behind the numbers. Look for patterns, specific complaints, and user suggestions. 
+    Use direct quotes in your PRDs and stakeholder communications.
+    </div>
+    """, unsafe_allow_html=True)
+    
     # Top reviews
     num_reviews = st.slider("Number of reviews to display", 5, 20, 10)
     
@@ -716,7 +1117,15 @@ elif page == "Theme Deep Dive":
             rating = int(row["score"])
             weight = row["final_weight"]
             
-            with st.expander(f"Rating: {rating}/5 — Pain Weight: {weight:.2f}"):
+            # Color-code by rating
+            if rating <= 2:
+                icon = "[LOW]"
+            elif rating == 3:
+                icon = "[MED]"
+            else:
+                icon = "[HIGH]"
+            
+            with st.expander(f"{icon} Rating: {rating}/5 — Pain Weight: {weight:.2f}"):
                 st.markdown(f"**Review:**")
                 st.write(row["content"])
                 st.markdown(f"**Score:** {row['score']} | **Weight:** {weight:.2f}")
