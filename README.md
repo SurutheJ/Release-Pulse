@@ -42,19 +42,6 @@ ReleasePulse is an end-to-end ML pipeline that:
 
 ---
 
-## Screenshots
-
-### Executive Summary
-High-level view of the latest release with key pain metrics.
-
-### Priority Roadmap
-RICE-scored backlog with regression and persistence flags.
-
-### Theme Deep Dive
-Explore raw user feedback with weighted impact scores.
-
----
-
 ## Tech Stack
 
 | Component | Technology |
@@ -109,7 +96,7 @@ ReleasePulse/
 
 ```bash
 # Clone the repository
-git clone https://github.com/SurutheJ/Projects.git
+git clone https://github.com/SurutheJ/Release-Pulse.git
 cd ReleasePulse
 
 # Install dependencies
