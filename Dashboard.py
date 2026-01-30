@@ -49,6 +49,33 @@ st.markdown("""
         border-left: 4px solid #1f77b4;
         margin: 10px 0;
     }
+    /* Fixed sidebar with compact spacing */
+    [data-testid="stSidebar"] {
+        position: fixed;
+        height: 100vh;
+    }
+    [data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
+        gap: 0.5rem;
+    }
+    [data-testid="stSidebar"] [data-testid="stMetric"] {
+        padding: 8px;
+    }
+    [data-testid="stSidebar"] [data-testid="stMetricValue"] {
+        font-size: 1.2rem;
+    }
+    [data-testid="stSidebar"] [data-testid="stMetricLabel"] {
+        font-size: 0.75rem;
+    }
+    [data-testid="stSidebar"] .stRadio > div {
+        gap: 0.25rem;
+    }
+    [data-testid="stSidebar"] h1 {
+        font-size: 1.3rem;
+        margin-bottom: 0;
+    }
+    [data-testid="stSidebar"] img {
+        max-width: 40px;
+    }
 </style>
 """, unsafe_allow_html=True)
 
