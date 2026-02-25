@@ -129,6 +129,11 @@ st.markdown("""
         max-width: 100%;
         word-wrap: break-word;
     }
+    /* Home page: hero and cards */
+    .hero-subtitle { font-size: 1.1rem; color: #555; margin-bottom: 1.5rem; line-height: 1.5; }
+    .agentic-badge { display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .home-card { border-radius: 12px; padding: 1.25rem 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #eee; margin: 0.5rem 0; }
+    .cta-box { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 12px; padding: 1.5rem; text-align: center; border-left: 4px solid #667eea; margin-top: 1.5rem; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -174,23 +179,16 @@ page = st.sidebar.radio(
 )
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("### Quick Stats")
-total_reviews = len(df)
-total_versions = df["RC_ver"].nunique()
-total_themes = df["theme_label"].nunique()
-
-st.sidebar.metric("Total Reviews", f"{total_reviews:,}")
-st.sidebar.metric("App Versions", total_versions)
-st.sidebar.metric("Theme Categories", total_themes)
-
-st.sidebar.markdown("---")
 st.sidebar.markdown("### 💬 AI Assistant")
-st.sidebar.markdown("Ask about **Spotify** priorities, themes, regressions. Available on every page.")
+st.sidebar.caption("Ask about Spotify priorities, themes, regressions.")
+st.sidebar.markdown("**Sample questions:**")
+st.sidebar.markdown("- What should we fix first?  \n- Which themes regressed?  \n- Show me Playback Reliability reviews  \n- What are the persistent issues?")
+st.sidebar.markdown("")
 with st.sidebar.expander("**Open chat**", expanded=True):
     for msg in st.session_state.chat_messages[-8:]:
         with st.chat_message(msg["role"], avatar=None):
             st.markdown(msg["content"])
-    chat_prompt = st.text_input("Ask about Spotify reviews...", key="sidebar_chat_input", placeholder="e.g. What should we fix first for Spotify?")
+    chat_prompt = st.text_input("Ask about Spotify reviews...", key="sidebar_chat_input", placeholder="e.g. What should we fix first?")
     if st.button("Send", key="sidebar_chat_send"):
         if chat_prompt and chat_prompt.strip():
             # Streamlit Cloud stores secrets in st.secrets; local uses OPENAI_API_KEY env var
@@ -210,17 +208,22 @@ st.sidebar.markdown("---")
 st.sidebar.caption("Portfolio edition — Suruthe Jayachandran")
 
 # ============================
-# 1. HOME (merged with About + Built with AI & ML)
+# 1. HOME (no charts; agentic AI focus, visually appealing)
 # ============================
 if page == "Home":
+    st.markdown("<span class='agentic-badge'>Agentic AI</span>", unsafe_allow_html=True)
     st.title("ReleasePulse — Spotify Review Intelligence")
-    st.markdown("### Turn **Spotify app store reviews** into actionable insights and prioritized decisions")
+    st.markdown(
+        "<p class='hero-subtitle'>Turn <strong>Spotify app store reviews</strong> into actionable insights and prioritized decisions. "
+        "Powered by <strong>agentic AI</strong>: ask in plain language, get answers from your data.</p>",
+        unsafe_allow_html=True
+    )
     
     st.markdown("""
     <div class="highlight-box">
     <strong>What this dashboard does:</strong> It analyzes <strong>Spotify mobile app user reviews</strong> from the store — 
     clusters them into themes, detects regressions and persistent issues, and ranks what to fix next (RICE). 
-    Use the <strong>AI Assistant</strong> in the sidebar to ask questions in plain language.
+    The <strong>agentic AI assistant</strong> in the sidebar decides which data to fetch and answers your questions in context.
     </div>
     """, unsafe_allow_html=True)
     
@@ -228,201 +231,95 @@ if page == "Home":
     st.markdown("**ReleasePulse** helps Product Managers answer three core questions:")
     
     col1, col2, col3 = st.columns(3)
-    
     with col1:
         st.markdown("""
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 12px; color: white; text-align: center; height: 150px;">
-            <h3>1</h3>
-            <p><strong>Where is user pain coming from?</strong></p>
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 28px 20px; border-radius: 12px; color: white; text-align: center; min-height: 140px; box-shadow: 0 4px 12px rgba(102,126,234,0.3);">
+            <p style="margin:0; font-size: 1.5rem; opacity: 0.9;">1</p>
+            <p style="margin: 0.5rem 0 0 0; font-weight: 600;">Where is user pain coming from?</p>
         </div>
         """, unsafe_allow_html=True)
-    
     with col2:
         st.markdown("""
-        <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 25px; border-radius: 12px; color: white; text-align: center; height: 150px;">
-            <h3>2</h3>
-            <p><strong>Is this a new regression or persistent debt?</strong></p>
+        <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 28px 20px; border-radius: 12px; color: white; text-align: center; min-height: 140px; box-shadow: 0 4px 12px rgba(240,147,251,0.3);">
+            <p style="margin:0; font-size: 1.5rem; opacity: 0.9;">2</p>
+            <p style="margin: 0.5rem 0 0 0; font-weight: 600;">Is this a new regression or persistent debt?</p>
         </div>
         """, unsafe_allow_html=True)
-    
     with col3:
         st.markdown("""
-        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 25px; border-radius: 12px; color: white; text-align: center; height: 150px;">
-            <h3>3</h3>
-            <p><strong>What should we fix next?</strong></p>
+        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 28px 20px; border-radius: 12px; color: white; text-align: center; min-height: 140px; box-shadow: 0 4px 12px rgba(79,172,254,0.3);">
+            <p style="margin:0; font-size: 1.5rem; opacity: 0.9;">3</p>
+            <p style="margin: 0.5rem 0 0 0; font-weight: 600;">What should we fix next?</p>
         </div>
         """, unsafe_allow_html=True)
     
     st.markdown("---")
     st.subheader("The Problem We Solve")
-    
-    st.markdown("""
-    <div class="warning-box">
-    <strong>The Challenge:</strong> Product Managers spend <strong>4-8 hours per release</strong> manually reading 
-    and categorizing app reviews. This process is time-consuming, subjective, and often reactive—issues are 
-    discovered after they've already impacted users.
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("""
-    <div class="success-box">
-    <strong>The Solution:</strong> ReleasePulse automates the feedback-to-insight pipeline, reducing analysis 
-    time to <strong>under 10 minutes</strong> while providing consistent, data-driven prioritization.
-    </div>
-    """, unsafe_allow_html=True)
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("""
+        <div class="warning-box">
+        <strong>The Challenge:</strong> PMs spend <strong>4–8 hours per release</strong> manually reading 
+        and categorizing app reviews — time-consuming, subjective, and reactive.
+        </div>
+        """, unsafe_allow_html=True)
+    with col2:
+        st.markdown("""
+        <div class="success-box">
+        <strong>The Solution:</strong> ReleasePulse automates the pipeline to <strong>under 10 minutes</strong> 
+        with consistent, data-driven prioritization and <strong>agentic AI</strong> for natural-language questions.
+        </div>
+        """, unsafe_allow_html=True)
     
     st.markdown("---")
     st.subheader("How to Use This Dashboard")
-    
     tab1, tab2, tab3, tab4, tab5 = st.tabs(["Methodology", "Executive Summary", "Release Health", "Priority Roadmap", "Theme Deep Dive"])
-    
     with tab1:
-        st.markdown("""
-        **Methodology** explains the technical approach:
-        - How reviews are weighted and clustered
-        - How regressions and persistence are detected
-        - The RICE prioritization formula
-        """)
-    
+        st.markdown("Technical approach: weighting, clustering, regression & persistence detection, RICE.")
     with tab2:
-        st.markdown("""
-        **Executive Summary** provides a high-level snapshot of the latest release:
-        - Overall user pain metrics
-        - Key performance indicators
-        - Quick health assessment
-        """)
-    
+        st.markdown("High-level snapshot of the latest release: pain metrics, top theme, quick health check.")
     with tab3:
-        st.markdown("""
-        **Release Health** offers diagnostic views:
-        - Pain concentration by version
-        - Theme-level breakdown
-        - Version-over-version comparisons
-        """)
-    
+        st.markdown("Pain by version, theme breakdown, version-over-version comparison.")
     with tab4:
-        st.markdown("""
-        **Priority Roadmap** helps with decision-making:
-        - RICE-style prioritization scoring
-        - Effort vs. impact analysis
-        - Regression and persistence flags
-        - **CSV export** for Jira import
-        """)
-    
+        st.markdown("RICE prioritization, effort vs impact, regression/persistence flags, CSV export.")
     with tab5:
-        st.markdown("""
-        **Theme Deep Dive** validates insights with evidence:
-        - Raw user feedback samples
-        - High-impact review exploration
-        - Contextual user quotes
-        """)
+        st.markdown("Raw user feedback and high-impact review samples per theme.")
     
     st.markdown("---")
     st.subheader("Built with — AI & ML")
     col1, col2, col3 = st.columns(3)
     with col1:
         st.markdown("""
-        **NLP & clustering**  
-        sentence-transformers (all-MiniLM-L6-v2), weighted KMeans for theme discovery.
-        """)
+        <div class="home-card">
+        <strong>NLP & clustering</strong><br>
+        <span style="color:#666; font-size:0.9rem;">sentence-transformers, weighted KMeans for theme discovery.</span>
+        </div>
+        """, unsafe_allow_html=True)
     with col2:
         st.markdown("""
-        **ML pipeline**  
-        Regression & persistence detection, RICE prioritization, weighted feedback scoring.
-        """)
+        <div class="home-card">
+        <strong>ML pipeline</strong><br>
+        <span style="color:#666; font-size:0.9rem;">Regression & persistence detection, RICE prioritization.</span>
+        </div>
+        """, unsafe_allow_html=True)
     with col3:
         st.markdown("""
-        **Agentic AI**  
-        Conversational assistant in the sidebar with LLM + tool-calling (priority backlog, reviews, regressions).
-        """)
-    st.markdown("---")
+        <div class="home-card">
+        <strong>Agentic AI</strong><br>
+        <span style="color:#666; font-size:0.9rem;">LLM + tool-calling: decides which data to fetch, answers from backlog, reviews, regressions.</span>
+        </div>
+        """, unsafe_allow_html=True)
     
-    # Key metrics row
-    col1, col2, col3, col4 = st.columns(4)
-    
-    latest_version = sorted(df["RC_ver"].dropna().unique())[-1]
-    latest_reviews = len(df[df["RC_ver"] == latest_version])
-    avg_rating = df[df["RC_ver"] == latest_version]["score"].mean()
-    persistent_issues = persistence[persistence["Is_Persistent"] == True].shape[0]
-    
-    with col1:
-        st.metric(
-            label="Latest Version",
-            value=latest_version,
-            delta="Current"
-        )
-    
-    with col2:
-        st.metric(
-            label="Reviews (Latest)",
-            value=f"{latest_reviews:,}",
-            delta=None
-        )
-    
-    with col3:
-        st.metric(
-            label="Avg Rating (Latest)",
-            value=f"{avg_rating:.2f}",
-            delta=f"{avg_rating - 2.5:.2f}" if avg_rating else None
-        )
-    
-    with col4:
-        st.metric(
-            label="Persistent Issues",
-            value=persistent_issues,
-            delta="Tracked"
-        )
-    
-    st.markdown("---")
-    
-    # Quick overview charts
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.subheader("Reviews by Version")
-        version_counts = df.groupby("RC_ver").size().reset_index(name="count")
-        version_counts = version_counts.sort_values("RC_ver")
-        
-        fig = px.bar(
-            version_counts,
-            x="RC_ver",
-            y="count",
-            color="count",
-            color_continuous_scale="Blues"
-        )
-        fig.update_layout(
-            xaxis_tickangle=-45,
-            height=350,
-            showlegend=False,
-            xaxis_title="App Version",
-            yaxis_title="Number of Reviews"
-        )
-        fig.update_coloraxes(showscale=False)
-        st.plotly_chart(fig, use_container_width=True)
-    
-    with col2:
-        st.subheader("Pain Distribution by Theme")
-        theme_pain = df.groupby("theme_label")["final_weight"].sum().reset_index()
-        theme_pain = theme_pain.sort_values("final_weight", ascending=True)
-        
-        fig = px.pie(
-            theme_pain,
-            values="final_weight",
-            names="theme_label",
-            hole=0.4,
-            color_discrete_sequence=px.colors.qualitative.Set2
-        )
-        fig.update_layout(height=350)
-        st.plotly_chart(fig, use_container_width=True)
-    
-    st.markdown("---")
     st.markdown("""
-    > **Design Principle:** *Context first, diagnosis next, decisions last.*
-    """)
-    st.info("Use the sidebar navigation to explore detailed insights. Open **Chat** in the sidebar to ask the AI assistant anything.")
+    <div class="cta-box">
+    <strong>Get started:</strong> Open the sidebar → <strong>Open chat</strong> and ask anything about Spotify priorities, themes, or regressions.
+    </div>
+    """, unsafe_allow_html=True)
+    st.markdown("")
+    st.caption("Design principle: context first, diagnosis next, decisions last.")
 
 # ============================
-# 3. METHODOLOGY (NEW)
+# 2. METHODOLOGY
 # ============================
 elif page == "Methodology":
     st.title("Methodology")
