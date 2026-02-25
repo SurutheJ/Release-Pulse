@@ -1,4 +1,5 @@
-# Extra deps for portfolio-agentic dashboard (agentic AI).
-# Install from project root: pip install -r portfolio-agentic/requirements.txt
-# Base deps (streamlit, pandas, plotly) are in the project root requirements.txt.
+# Full deps for portfolio-agentic dashboard (Streamlit Cloud uses this when main file is here).
+streamlit>=1.28.0
+pandas>=2.0.0
+plotly>=5.18.0
 openai>=1.0.0
