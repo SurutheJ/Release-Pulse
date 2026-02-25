@@ -180,9 +180,14 @@ with st.sidebar.expander("Chat", expanded=False):
     chat_prompt = st.text_input("Ask the assistant...", key="sidebar_chat_input", placeholder="e.g. What should we fix first?")
     if st.button("Send", key="sidebar_chat_send"):
         if chat_prompt and chat_prompt.strip():
+            # Streamlit Cloud stores secrets in st.secrets; local uses OPENAI_API_KEY env var
+            try:
+                api_key = st.secrets["OPENAI_API_KEY"]
+            except (KeyError, AttributeError, TypeError):
+                api_key = os.environ.get("OPENAI_API_KEY")
             ctx = {"reviews": reviews, "priority": priority, "persistence": persistence, "version_signal": version_signal}
             with st.spinner("Thinking..."):
-                reply = run_agent(chat_prompt.strip(), ctx)
+                reply = run_agent(chat_prompt.strip(), ctx, api_key=api_key)
             st.session_state.chat_messages.append({"role": "user", "content": chat_prompt.strip()})
             st.session_state.chat_messages.append({"role": "assistant", "content": reply})
             if "sidebar_chat_input" in st.session_state:
