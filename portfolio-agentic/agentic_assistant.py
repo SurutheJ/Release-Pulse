@@ -10,9 +10,11 @@ import json
 
 try:
     from openai import OpenAI
+    from openai import RateLimitError, APIError, APIConnectionError
     OPENAI_AVAILABLE = True
 except ImportError:
     OPENAI_AVAILABLE = False
+    RateLimitError = APIError = APIConnectionError = Exception  # no-op if openai not installed
 
 
 TOOLS_OPENAI = [
@@ -173,32 +175,42 @@ def run_agent(user_message: str, context: dict, api_key: str = None) -> str:
         {"role": "user", "content": user_message},
     ]
     max_turns = 8
-    for _ in range(max_turns):
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=messages,
-            tools=TOOLS_OPENAI,
-            tool_choice="auto",
-        )
-        choice = response.choices[0]
-        if choice.finish_reason == "stop":
+    try:
+        for _ in range(max_turns):
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=messages,
+                tools=TOOLS_OPENAI,
+                tool_choice="auto",
+            )
+            choice = response.choices[0]
+            if choice.finish_reason == "stop":
+                return choice.message.content or ""
+            if choice.finish_reason == "tool_calls" and choice.message.tool_calls:
+                for tc in choice.message.tool_calls:
+                    name = tc.function.name
+                    try:
+                        args = json.loads(tc.function.arguments or "{}")
+                    except json.JSONDecodeError:
+                        args = {}
+                    result = _run_tool(name, args, context)
+                    messages.append(choice.message)
+                    messages.append(
+                        {
+                            "role": "tool",
+                            "tool_call_id": tc.id,
+                            "content": result,
+                        }
+                    )
+                continue
             return choice.message.content or ""
-        if choice.finish_reason == "tool_calls" and choice.message.tool_calls:
-            for tc in choice.message.tool_calls:
-                name = tc.function.name
-                try:
-                    args = json.loads(tc.function.arguments or "{}")
-                except json.JSONDecodeError:
-                    args = {}
-                result = _run_tool(name, args, context)
-                messages.append(choice.message)
-                messages.append(
-                    {
-                        "role": "tool",
-                        "tool_call_id": tc.id,
-                        "content": result,
-                    }
-                )
-            continue
-        return choice.message.content or ""
-    return "I hit the turn limit. Please try a shorter or more focused question."
+        return "I hit the turn limit. Please try a shorter or more focused question."
+    except RateLimitError:
+        return (
+            "**OpenAI rate limit reached.** You're sending too many requests. "
+            "Wait a minute and try again, or check your [OpenAI usage](https://platform.openai.com/usage) and plan limits."
+        )
+    except (APIError, APIConnectionError) as e:
+        return f"**OpenAI API error.** Please try again later. ({type(e).__name__})"
+    except Exception as e:
+        return f"**Something went wrong.** Please try again. ({type(e).__name__})"

@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from agentic_assistant import run_agent
 
 st.set_page_config(
-    page_title="ReleasePulse — Portfolio (AI & Agentic)",
+    page_title="ReleasePulse — Spotify Review Intelligence",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -117,6 +117,18 @@ st.markdown("""
     [data-testid="stSidebar"] img {
         max-width: 40px;
     }
+    /* Chat messages: hide avatar so content uses full width, viewer-friendly */
+    [data-testid="stSidebar"] [data-testid="stChatMessage"] {
+        padding: 0.5rem 0;
+        max-width: 100%;
+    }
+    [data-testid="stSidebar"] [data-testid="stChatMessage"] > div:first-child {
+        display: none;
+    }
+    [data-testid="stSidebar"] [data-testid="stChatMessage"] [data-testid="stMarkdown"] {
+        max-width: 100%;
+        word-wrap: break-word;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -143,8 +155,9 @@ if "chat_messages" not in st.session_state:
 # Sidebar Navigation
 # ============================
 st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Spotify_icon.svg/232px-Spotify_icon.svg.png", width=60)
-st.sidebar.title("ReleasePulse — Portfolio")
-st.sidebar.caption("AI & ML · Agentic Assistant")
+st.sidebar.caption("**Spotify app** · User review intelligence")
+st.sidebar.title("ReleasePulse")
+st.sidebar.markdown("Feedback insights & prioritization from **Spotify** app store reviews.")
 st.sidebar.markdown("---")
 
 page = st.sidebar.radio(
@@ -171,13 +184,13 @@ st.sidebar.metric("App Versions", total_versions)
 st.sidebar.metric("Theme Categories", total_themes)
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("### AI Assistant")
-st.sidebar.caption("Ask about priorities, themes, regressions. Available on every page.")
-with st.sidebar.expander("Chat", expanded=False):
+st.sidebar.markdown("### 💬 AI Assistant")
+st.sidebar.markdown("Ask about **Spotify** priorities, themes, regressions. Available on every page.")
+with st.sidebar.expander("**Open chat**", expanded=True):
     for msg in st.session_state.chat_messages[-8:]:
-        with st.chat_message(msg["role"]):
+        with st.chat_message(msg["role"], avatar=None):
             st.markdown(msg["content"])
-    chat_prompt = st.text_input("Ask the assistant...", key="sidebar_chat_input", placeholder="e.g. What should we fix first?")
+    chat_prompt = st.text_input("Ask about Spotify reviews...", key="sidebar_chat_input", placeholder="e.g. What should we fix first for Spotify?")
     if st.button("Send", key="sidebar_chat_send"):
         if chat_prompt and chat_prompt.strip():
             # Streamlit Cloud stores secrets in st.secrets; local uses OPENAI_API_KEY env var
@@ -200,13 +213,14 @@ st.sidebar.caption("Portfolio edition — Suruthe Jayachandran")
 # 1. HOME (merged with About + Built with AI & ML)
 # ============================
 if page == "Home":
-    st.title("ReleasePulse — Portfolio")
-    st.markdown("### AI & ML · Feedback Intelligence · Agentic Assistant")
+    st.title("ReleasePulse — Spotify Review Intelligence")
+    st.markdown("### Turn **Spotify app store reviews** into actionable insights and prioritized decisions")
     
     st.markdown("""
     <div class="highlight-box">
-    <strong>Welcome to ReleasePulse</strong> — An internal Product Management tool designed to transform 
-    noisy user reviews into <strong>actionable release insights</strong> and <strong>prioritized roadmap decisions</strong>.
+    <strong>What this dashboard does:</strong> It analyzes <strong>Spotify mobile app user reviews</strong> from the store — 
+    clusters them into themes, detects regressions and persistent issues, and ranks what to fix next (RICE). 
+    Use the <strong>AI Assistant</strong> in the sidebar to ask questions in plain language.
     </div>
     """, unsafe_allow_html=True)
     
